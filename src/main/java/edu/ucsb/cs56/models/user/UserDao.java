@@ -10,7 +10,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 public interface UserDao
 {
     @SqlUpdate("create table users (" +
-        "id int primary key auto_increment, " +
+        "id integer primary key auto_increment, " +
         "username varchar(50) UNIQUE, " +
         "name varchar(200), " +
         "github_token varchar(200)" +
