@@ -62,9 +62,14 @@ public class Application {
 
         this.database = new DBI(this.getDBConnString());
         UserDao users = database.open(UserDao.class);
-        users.createUserTable();
+        
+        try {
+            users.createUserTable();
+            users.insert("ncbrown", "Nick Brown", "asdf1234");
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
 
-        users.insert("ncbrown", "Nick Brown", "asdf1234");
         System.out.println(users.findUserByUsername("ncbrown"));
 
         users.close();

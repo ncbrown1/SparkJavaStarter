@@ -32,6 +32,6 @@ public class UserModel {
     
     @Override
     public String toString () {
-        return this.username + " - " + this.name;
+        return "(" + this.id + ") " + this.username + " - " + this.name;
     }
 }
