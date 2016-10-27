@@ -1,11 +1,10 @@
 package edu.ucsb.cs56;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 import com.typesafe.config.Config;
 
 import edu.ucsb.cs56.models.user.UserDao;
+import org.postgresql.ds.PGPoolingDataSource;
 import org.skife.jdbi.v2.DBI;
-import org.sqlite.javax.SQLiteConnectionPoolDataSource;
 import spark.route.RouteOverview;
 
 import javax.sql.DataSource;
@@ -26,22 +25,14 @@ public class Application {
         this.config = config;
     }
     
-    private DataSource getDBConnString() {
-        DataSource source;
-        switch (config.getString("db.driver")) {
-            case "mysql":
-                source = new MysqlConnectionPoolDataSource();
-                ((MysqlConnectionPoolDataSource)source).setServerName(config.getString("db.url"));
-                ((MysqlConnectionPoolDataSource)source).setPort(config.getInt("db.port"));
-                ((MysqlConnectionPoolDataSource)source).setDatabaseName(config.getString("db.database"));
-                ((MysqlConnectionPoolDataSource)source).setUser(config.getString("db.username"));
-                ((MysqlConnectionPoolDataSource)source).setPassword(config.getString("db.password"));
-                break;
-            case "sqlite":default:
-                source = new SQLiteConnectionPoolDataSource();
-                ((SQLiteConnectionPoolDataSource)source).setUrl("jdbc:sqlite:" + config.getString("db.url"));
-                break;
-        }
+    private DataSource getDataSource() {
+        PGPoolingDataSource source = new PGPoolingDataSource();
+        source.setDataSourceName("Application Database");
+        source.setServerName(config.getString("db.url"));
+        source.setDatabaseName(config.getString("db.database"));
+        source.setUser(config.getString("db.username"));
+        source.setPassword(config.getString("db.password"));
+        source.setMaxConnections(config.getInt("db.connections"));
         return source;
     }
 
@@ -60,14 +51,14 @@ public class Application {
         
         // connect to database
 
-        this.database = new DBI(this.getDBConnString());
+        this.database = new DBI(this.getDataSource());
         UserDao users = database.open(UserDao.class);
         
         try {
             users.createUserTable();
             users.insert("ncbrown", "Nick Brown", "asdf1234");
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
 
         System.out.println(users.findUserByUsername("ncbrown"));
