@@ -1,20 +1,19 @@
 package edu.ucsb.cs56.http;
 
 import com.typesafe.config.Config;
-import spark.TemplateEngine;
+import edu.ucsb.cs56.utils.HandlebarsTemplateEngine;
 
 
 /**
  * Created by ncbrown on 10/27/16.
  */
-public abstract class Controller {
+public abstract class Controller extends HandlebarsTemplateEngine {
     
     protected Config config;
-    protected TemplateEngine engine;
     
-    public Controller(Config config, TemplateEngine engine) {
+    public Controller(Config config) {
         this.config = config;
-        this.engine = engine;
+        handlebars.registerHelpers(this);
     }
     
     public abstract void publishRoutes();
