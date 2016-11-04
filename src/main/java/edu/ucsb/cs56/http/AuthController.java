@@ -6,7 +6,6 @@ import org.pac4j.sparkjava.ApplicationLogoutRoute;
 import org.pac4j.sparkjava.CallbackRoute;
 import org.pac4j.sparkjava.SecurityFilter;
 import spark.ModelAndView;
-import spark.TemplateEngine;
 import spark.TemplateViewRoute;
 
 import java.util.HashMap;
@@ -24,13 +23,13 @@ public class AuthController extends Controller {
     private org.pac4j.core.config.Config authConfig;
     private final SecurityFilter authFilter;
     
-    public AuthController(Config config, TemplateEngine engine) {
-        super(config, engine);
+    public AuthController(Config config) {
+        super(config);
         this.authConfig = new GitHubOAuthConfigFactory(
             this.config.getString("app.github_client_id"),
             this.config.getString("app.github_secret"),
             this.config.getString("app.github_callback_url"),
-            this.engine,
+            this,
             this.config.getString("app.github_scopes")
         ).build();
         this.authFilter = new SecurityFilter(authConfig, "GithubClient", "", "");
@@ -39,12 +38,16 @@ public class AuthController extends Controller {
     @Override
     public void publishRoutes () {
         before("/login", authFilter);
-        get("/login", loginRoute(), this.engine);
+        get("/login", loginRoute(), this);
         get("/logout", new ApplicationLogoutRoute(authConfig, "/"));
     
         final CallbackRoute callback = new CallbackRoute(authConfig);
         get("/auth/callback", callback);
         post("/auth/callback", callback);
+    }
+    
+    public String dostuff(String bar) {
+        return "dynamix " + bar;
     }
     
     public TemplateViewRoute loginRoute() {

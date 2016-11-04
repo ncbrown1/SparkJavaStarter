@@ -5,20 +5,18 @@ import com.typesafe.config.Config;
 import edu.ucsb.cs56.http.AuthController;
 import edu.ucsb.cs56.http.Controller;
 import edu.ucsb.cs56.models.user.UserDao;
+import edu.ucsb.cs56.utils.HandlebarsTemplateEngine;
 import org.postgresql.ds.PGPoolingDataSource;
 import org.skife.jdbi.v2.DBI;
 import spark.ModelAndView;
 import spark.route.RouteOverview;
-import spark.template.handlebars.HandlebarsTemplateEngine;
 
 import javax.sql.DataSource;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static spark.Spark.get;
-import static spark.Spark.port;
-import static spark.Spark.staticFiles;
+import spark.Spark;
 
 
 /**
@@ -49,43 +47,47 @@ public class Application {
 
         // configure server settings
 
-        port(config.getInt("port"));
+        Spark.port(config.getInt("port"));
         if (config.getBoolean("localhost")) {
             String projectDir = System.getProperty("user.dir");
             String staticDir = "/src/main/resources/public";
-            staticFiles.externalLocation(projectDir + staticDir);
+            Spark.staticFiles.externalLocation(projectDir + staticDir);
         } else {
-            staticFiles.location("/public");
+            Spark.staticFiles.location("/public");
         }
         
         // connect to database
 
         this.database = new DBI(this.getDataSource());
-        UserDao users = database.open(UserDao.class);
+        this.testAddUser();
         
+        Arrays.asList(
+            new AuthController(config)
+        ).forEach(Controller::publishRoutes);
+        
+        HashMap<String, String> model = new HashMap<>();
+        model.put("name", "foobar");
+        Spark.get("/", (req, res) -> new ModelAndView(model, "home.hbs"), templateEngine);
+        RouteOverview.enableRouteOverview(); // /debug/routeoverview/
+    }
+    
+    private void testAddUser() {
+        UserDao users = database.open(UserDao.class);
+    
         try {
             users.createUserTable();
             users.insert("ncbrown", "Nick Brown", "asdf1234");
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+    
         System.out.println(users.findUserByUsername("ncbrown"));
-
+    
         users.close();
-
+    
         users = database.open(UserDao.class);
         System.out.println(users.findUserByUsername("ncbrown"));
-
+    
         users.close();
-        
-        Arrays.asList(
-            new AuthController(config, templateEngine)
-        ).forEach(Controller::publishRoutes);
-        
-        HashMap<String, String> model = new HashMap<>();
-        model.put("name", "foobar");
-        get("/", (req, res) -> new ModelAndView(model, "home.hbs"), templateEngine);
-        RouteOverview.enableRouteOverview(); // /debug/routeoverview/
     }
 }
