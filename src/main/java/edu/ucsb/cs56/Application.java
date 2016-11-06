@@ -1,11 +1,12 @@
 package edu.ucsb.cs56;
 
+import com.google.common.collect.ImmutableMap;
 import com.typesafe.config.Config;
 
 import edu.ucsb.cs56.http.AuthController;
 import edu.ucsb.cs56.http.Controller;
+import edu.ucsb.cs56.models.Dao;
 import edu.ucsb.cs56.models.user.UserDao;
-import edu.ucsb.cs56.utils.HandlebarsTemplateEngine;
 import org.postgresql.ds.PGPoolingDataSource;
 import org.skife.jdbi.v2.DBI;
 import spark.ModelAndView;
@@ -15,6 +16,7 @@ import javax.sql.DataSource;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import spark.Spark;
 
@@ -22,14 +24,23 @@ import spark.Spark;
 /**
  * Created by ncbrown on 10/24/16.
  */
-public class Application {
+public class Application extends Controller {
 
-    private Config config;
     private DBI database;
-    private static final HandlebarsTemplateEngine templateEngine = new HandlebarsTemplateEngine();
+    private static Map<String, Class<? extends Dao>> models =
+        new ImmutableMap.Builder<String, Class<? extends Dao>>()
+            .put("Users", UserDao.class)
+            .build();
 
     public Application(Config config) {
-        this.config = config;
+        super(config);
+    }
+
+    @Override
+    public void publishRoutes () {
+        Arrays.asList(
+            new AuthController(config)
+        ).forEach(Controller::publishRoutes);
     }
     
     private DataSource getDataSource() {
@@ -43,11 +54,15 @@ public class Application {
         return source;
     }
 
-    public void initialize() {
+    public void initialize(Long port) {
 
         // configure server settings
+        if (port == null) {
+            Spark.port(config.getInt("port"));
+        } else {
+            Spark.port(port.intValue());
+        }
 
-        Spark.port(config.getInt("port"));
         if (config.getBoolean("localhost")) {
             String projectDir = System.getProperty("user.dir");
             String staticDir = "/src/main/resources/public";
@@ -61,21 +76,34 @@ public class Application {
         this.database = new DBI(this.getDataSource());
         this.testAddUser();
         
-        Arrays.asList(
-            new AuthController(config)
-        ).forEach(Controller::publishRoutes);
+        this.publishRoutes();
         
         HashMap<String, String> model = new HashMap<>();
         model.put("name", "foobar");
-        Spark.get("/", (req, res) -> new ModelAndView(model, "home.hbs"), templateEngine);
+        Spark.get("/", (req, res) -> new ModelAndView(model, "home.hbs"), this);
         RouteOverview.enableRouteOverview(); // /debug/routeoverview/
+    }
+    
+    public void initialize_database() {
+        this.database = new DBI(this.getDataSource());
+        models.forEach((name, model) -> {
+            Dao dao = database.open(model);
+            try {
+                System.out.print("Creating database table for " + name + "...");
+                dao.createTable();
+                System.out.println("Created!");
+            } catch (Exception e) {
+                System.out.println("Error--The table probably already exists.");
+//                e.printStackTrace();
+            }
+            dao.close();
+        });
     }
     
     private void testAddUser() {
         UserDao users = database.open(UserDao.class);
     
         try {
-            users.createUserTable();
             users.insert("ncbrown", "Nick Brown", "asdf1234");
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package edu.ucsb.cs56.models.user;
 
+import edu.ucsb.cs56.models.Dao;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
@@ -7,15 +8,16 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 
 @RegisterMapper(UserModelMapper.class)
-public interface UserDao
+public interface UserDao extends Dao
 {
+    @Override
     @SqlUpdate("create table users (" +
         "id SERIAL PRIMARY KEY, " +
         "username varchar(50) UNIQUE, " +
         "name varchar(200), " +
         "github_token varchar(200)" +
     ")")
-    void createUserTable();
+    void createTable();
 
     @SqlUpdate("insert into users " +
         "(username, name, github_token) values " +
@@ -32,9 +34,4 @@ public interface UserDao
 
     @SqlQuery("select * from users where username = :username")
     UserModel findUserByUsername(@Bind("username") String username);
-
-    /**
-     * close with no args is used to close the connection
-     */
-    void close();
 }
