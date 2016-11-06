@@ -1,6 +1,6 @@
-package edu.ucsb.cs56.models.user;
+package me.nickbrown.sparkjavastarter.models.user;
 
-import edu.ucsb.cs56.models.Dao;
+import me.nickbrown.sparkjavastarter.models.Dao;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;

@@ -1,8 +1,8 @@
-package edu.ucsb.cs56;
+package me.nickbrown.sparkjavastarter;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import edu.ucsb.cs56.utils.CLIParser;
+import me.nickbrown.sparkjavastarter.utils.CLIParser;
 
 
 /**

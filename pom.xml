@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucsb.cs56</groupId>
-    <artifactId>convention-checker</artifactId>
+    <groupId>me.nickbrown</groupId>
+    <artifactId>sparkjavastarter</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -104,7 +104,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>edu.ucsb.cs56.RunApplication</mainClass>
+                            <mainClass>me.nickbrown.sparkjavastarter.RunApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

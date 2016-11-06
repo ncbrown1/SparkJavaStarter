@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.models.user;
+package me.nickbrown.sparkjavastarter.models.user;
 
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;

@@ -1,7 +1,7 @@
-package edu.ucsb.cs56.http;
+package me.nickbrown.sparkjavastarter.http;
 
 import com.typesafe.config.Config;
-import edu.ucsb.cs56.auth.GitHubOAuthConfigFactory;
+import me.nickbrown.sparkjavastarter.auth.GitHubOAuthConfigFactory;
 import org.pac4j.sparkjava.ApplicationLogoutRoute;
 import org.pac4j.sparkjava.CallbackRoute;
 import org.pac4j.sparkjava.SecurityFilter;

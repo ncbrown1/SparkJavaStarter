@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.models;
+package me.nickbrown.sparkjavastarter.models;
 
 /**
  * Created by ncbrown on 11/6/16.

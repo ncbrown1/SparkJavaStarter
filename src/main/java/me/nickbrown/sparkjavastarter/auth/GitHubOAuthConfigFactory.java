@@ -1,6 +1,6 @@
-package edu.ucsb.cs56.auth;
+package me.nickbrown.sparkjavastarter.auth;
 
-import edu.ucsb.cs56.http.DemoHttpActionAdapter;
+import me.nickbrown.sparkjavastarter.http.DemoHttpActionAdapter;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
 import org.pac4j.core.client.Clients;

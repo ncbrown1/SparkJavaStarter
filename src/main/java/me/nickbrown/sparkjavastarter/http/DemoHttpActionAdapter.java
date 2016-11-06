@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.http;
+package me.nickbrown.sparkjavastarter.http;
 
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.sparkjava.DefaultHttpActionAdapter;

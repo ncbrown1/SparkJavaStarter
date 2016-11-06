@@ -1,7 +1,7 @@
-package edu.ucsb.cs56.http;
+package me.nickbrown.sparkjavastarter.http;
 
 import com.typesafe.config.Config;
-import edu.ucsb.cs56.utils.HandlebarsTemplateEngine;
+import me.nickbrown.sparkjavastarter.utils.HandlebarsTemplateEngine;
 
 
 /**

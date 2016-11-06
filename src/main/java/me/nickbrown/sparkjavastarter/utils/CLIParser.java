@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.utils;
+package me.nickbrown.sparkjavastarter.utils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

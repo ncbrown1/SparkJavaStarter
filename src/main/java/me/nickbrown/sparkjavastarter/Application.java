@@ -1,12 +1,12 @@
-package edu.ucsb.cs56;
+package me.nickbrown.sparkjavastarter;
 
 import com.google.common.collect.ImmutableMap;
 import com.typesafe.config.Config;
 
-import edu.ucsb.cs56.http.AuthController;
-import edu.ucsb.cs56.http.Controller;
-import edu.ucsb.cs56.models.Dao;
-import edu.ucsb.cs56.models.user.UserDao;
+import me.nickbrown.sparkjavastarter.http.AuthController;
+import me.nickbrown.sparkjavastarter.http.Controller;
+import me.nickbrown.sparkjavastarter.models.Dao;
+import me.nickbrown.sparkjavastarter.models.user.UserDao;
 import org.postgresql.ds.PGPoolingDataSource;
 import org.skife.jdbi.v2.DBI;
 import spark.ModelAndView;

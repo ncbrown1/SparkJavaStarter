@@ -1,4 +1,4 @@
-package edu.ucsb.cs56.models.user;
+package me.nickbrown.sparkjavastarter.models.user;
 
 
 /**
