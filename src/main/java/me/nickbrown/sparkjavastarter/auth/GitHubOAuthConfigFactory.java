@@ -1,6 +1,6 @@
 package me.nickbrown.sparkjavastarter.auth;
 
-import me.nickbrown.sparkjavastarter.http.DemoHttpActionAdapter;
+import me.nickbrown.sparkjavastarter.utils.DemoHttpActionAdapter;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
 import org.pac4j.core.client.Clients;

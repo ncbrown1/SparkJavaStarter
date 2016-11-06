@@ -1,4 +1,4 @@
-package me.nickbrown.sparkjavastarter.http;
+package me.nickbrown.sparkjavastarter.utils;
 
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.sparkjava.DefaultHttpActionAdapter;
