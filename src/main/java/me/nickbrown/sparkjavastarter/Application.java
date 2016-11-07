@@ -20,6 +20,8 @@ import java.util.Map;
 
 import spark.Spark;
 
+import static spark.debug.DebugScreen.enableDebugScreen;
+
 
 /**
  * Created by ncbrown on 10/24/16.
@@ -80,8 +82,15 @@ public class Application extends Controller {
         
         HashMap<String, String> model = new HashMap<>();
         model.put("name", "foobar");
-        Spark.get("/", (req, res) -> new ModelAndView(model, "home.hbs"), this);
+        Spark.get("/", (req, res) -> "hi there"); //new ModelAndView(model, "home.hbs"), this);
         RouteOverview.enableRouteOverview(); // /debug/routeoverview/
+        
+        String env = System.getenv("ENV");
+        env = (env == null ? "development" : env);
+        
+        if (env.equals("development")) {
+            enableDebugScreen();
+        }
     }
     
     public void initialize_database() {
