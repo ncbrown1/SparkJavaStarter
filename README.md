@@ -35,7 +35,7 @@ from above, make it executable, and run it.
 cp env.sh.example env.sh
 (vim/emacs/atom/nano/etc) env.sh # edit file to add your OAuth settings
 chmod +x env.sh
-./env.sh
+source ./env.sh
 ```
 
 ### Set Up the Application and Database
