@@ -1,19 +1,20 @@
 package me.nickbrown.sparkjavastarter;
 
 import com.google.common.collect.ImmutableMap;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.db.PostgresDatabaseType;
+import com.j256.ormlite.jdbc.DataSourceConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import com.typesafe.config.Config;
 
 import me.nickbrown.sparkjavastarter.http.AuthController;
 import me.nickbrown.sparkjavastarter.http.Controller;
-import me.nickbrown.sparkjavastarter.models.Dao;
-import me.nickbrown.sparkjavastarter.models.user.UserDao;
+import me.nickbrown.sparkjavastarter.models.User;
 import org.postgresql.ds.PGPoolingDataSource;
-import org.skife.jdbi.v2.DBI;
-import spark.ModelAndView;
 import spark.route.RouteOverview;
 
-import javax.sql.DataSource;
-
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +29,10 @@ import static spark.debug.DebugScreen.enableDebugScreen;
  */
 public class Application extends Controller {
 
-    private DBI database;
-    private static Map<String, Class<? extends Dao>> models =
-        new ImmutableMap.Builder<String, Class<? extends Dao>>()
-            .put("Users", UserDao.class)
+    private ConnectionSource connectionSource;
+    private static Map<String, Class> models =
+        new ImmutableMap.Builder<String, Class>()
+            .put("Users", User.class)
             .build();
 
     public Application(Config config) {
@@ -45,7 +46,8 @@ public class Application extends Controller {
         ).forEach(Controller::publishRoutes);
     }
     
-    private DataSource getDataSource() {
+    private ConnectionSource getConnectionSource() throws SQLException {
+        if (this.connectionSource != null) return this.connectionSource;
         PGPoolingDataSource source = new PGPoolingDataSource();
         source.setDataSourceName("Application Database");
         source.setServerName(config.getString("db.url"));
@@ -53,7 +55,8 @@ public class Application extends Controller {
         source.setUser(config.getString("db.username"));
         source.setPassword(config.getString("db.password"));
         source.setMaxConnections(config.getInt("db.connections"));
-        return source;
+        this.connectionSource = new DataSourceConnectionSource(source, new PostgresDatabaseType());
+        return this.connectionSource;
     }
 
     public void initialize(Long port) {
@@ -75,8 +78,13 @@ public class Application extends Controller {
         
         // connect to database
 
-        this.database = new DBI(this.getDataSource());
-        this.testAddUser();
+        try {
+            this.initialize_daos();
+            this.testAddUser();
+        } catch (SQLException se) {
+            System.err.println("Could not establish a connection with the database.");
+            System.exit(1);
+        }
         
         this.publishRoutes();
         
@@ -93,38 +101,34 @@ public class Application extends Controller {
         }
     }
     
-    public void initialize_database() {
-        this.database = new DBI(this.getDataSource());
-        models.forEach((name, model) -> {
-            Dao dao = database.open(model);
+    private void initialize_daos() throws SQLException {
+        User.dao = DaoManager.createDao(getConnectionSource(), User.class);
+    }
+    
+    public void initialize_database() throws SQLException {
+        models.forEach((name, model)  -> {
             try {
                 System.out.print("Creating database table for " + name + "...");
-                dao.createTable();
+                TableUtils.createTable(getConnectionSource(), model);
                 System.out.println("Created!");
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 System.out.println("Error--The table probably already exists.");
-//                e.printStackTrace();
+                e.printStackTrace();
             }
-            dao.close();
         });
     }
     
     private void testAddUser() {
-        UserDao users = database.open(UserDao.class);
-    
         try {
-            users.insert("ncbrown", "Nick Brown", "asdf1234");
+            User u = new User();
+            u.setUsername("ncbrown");
+            u.setName("Nick Brown");
+            u.setGithub_token("asdf1234");
+            User.dao.create(u);
+            
+            System.out.println(User.dao.queryForEq("username", "ncbrown"));
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
-        System.out.println(users.findUserByUsername("ncbrown"));
-    
-        users.close();
-    
-        users = database.open(UserDao.class);
-        System.out.println(users.findUserByUsername("ncbrown"));
-    
-        users.close();
     }
 }

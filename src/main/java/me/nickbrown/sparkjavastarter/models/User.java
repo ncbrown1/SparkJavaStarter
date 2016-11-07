@@ -1,17 +1,28 @@
-package me.nickbrown.sparkjavastarter.models.user;
+package me.nickbrown.sparkjavastarter.models;
+
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 
 /**
  * Created by ncbrown on 10/25/16.
  */
-public class UserModel {
+@DatabaseTable(tableName = "users")
+public class User {
+    public static Dao<User, Integer> dao = null;
+    
+    @DatabaseField(generatedId = true)
     private int id;
+    @DatabaseField(unique = true)
     private String username;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private String github_token;
 
-    public UserModel() {}
-    public UserModel(int id, String username, String name, String github_token) {
+    public User() {}
+    public User(int id, String username, String name, String github_token) {
         this.id = id;
         this.username = username;
         this.name = name;
@@ -19,7 +30,6 @@ public class UserModel {
     }
 
     public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
