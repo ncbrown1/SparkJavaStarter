@@ -88,11 +88,10 @@ some of the java libraries that I included and my reasons for doing so:
   * Our Controller class actually extends from the HandlebarsTemplateEngine so
     that we can call helper methods from the controller class inside the templates.
     * They can even accept arguments!
-* [JDBI](http://jdbi.org/)
-  * JDBI is essentially an extension of JDBC that allows us to interface easily
-    with SQL-based databases.
-  * Our concept of a Model is based on its SQL Object API (see
-    `src/main/java/me/nickbrown/sparkjavastarter/models/user/UserDao.java`)
+* [ORMLite](http://ormlite.com/)
+  * ORMLite lets us easily create persistent models for our application.
+  * Backed by JDBC, it is able to connect to multiple types of database
+    * Right now, we are using Postgres in order to use Heroku in the future.
 * [Spark-PAC4J](https://github.com/pac4j/spark-pac4j)
   * Allows for flexible authentication using a variety of sources. For now, I'm
     using GitHub OAuth, bit you could use whatever you like.
