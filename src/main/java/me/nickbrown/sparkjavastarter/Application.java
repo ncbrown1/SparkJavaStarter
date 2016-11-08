@@ -1,14 +1,12 @@
 package me.nickbrown.sparkjavastarter;
 
-import com.google.common.collect.ImmutableMap;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 import com.typesafe.config.Config;
 
 import me.nickbrown.sparkjavastarter.http.AuthController;
 import me.nickbrown.sparkjavastarter.http.Controller;
+import me.nickbrown.sparkjavastarter.models.Model;
 import me.nickbrown.sparkjavastarter.models.User;
 import spark.ModelAndView;
 import spark.route.RouteOverview;
@@ -18,7 +16,7 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import spark.Spark;
 
@@ -31,10 +29,16 @@ import static spark.debug.DebugScreen.enableDebugScreen;
 public class Application extends Controller {
 
     private ConnectionSource connectionSource;
-    private static Map<String, Class> models =
-        new ImmutableMap.Builder<String, Class>()
-            .put("Users", User.class)
-            .build();
+    private List<Class<? extends Model>> models =
+        Arrays.asList(
+            User.class
+            // insert your other models here
+        );
+    private List<Class<? extends Controller>> controllers =
+        Arrays.asList(
+            AuthController.class
+            // insert your other controllers here
+        );
 
     public Application(Config config) {
         super(config);
@@ -42,9 +46,14 @@ public class Application extends Controller {
 
     @Override
     public void publishRoutes () {
-        Arrays.asList(
-            new AuthController(config)
-        ).forEach(Controller::publishRoutes);
+        controllers.forEach((controller) -> {
+            try {
+                controller
+                    .getConstructor(Config.class)
+                    .newInstance(config)
+                    .publishRoutes();
+            } catch (Exception e) {}
+        });
     }
     
     private ConnectionSource getConnectionSource() throws SQLException {
@@ -89,7 +98,6 @@ public class Application extends Controller {
 
         try {
             this.initialize_daos();
-            this.testAddUser();
         } catch (SQLException se) {
             System.err.println("Could not establish a connection with the database.");
             System.exit(1);
@@ -103,31 +111,24 @@ public class Application extends Controller {
         RouteOverview.enableRouteOverview(); // /debug/routeoverview/
         
         String env = System.getenv("ENV");
-        env = (env == null ? "development" : env);
-        
-        if (env.equals("development")) {
+        if (env == null || env.equals("development")) {
             enableDebugScreen();
         }
     }
     
     private void initialize_daos() throws SQLException {
-        User.dao = DaoManager.createDao(getConnectionSource(), User.class);
-    }
-    
-    public void initialize_database() throws SQLException {
-        models.forEach((name, model)  -> {
+        models.forEach((model_class) -> {
             try {
-                System.out.print("Creating database table for " + name + "...");
-                TableUtils.createTable(getConnectionSource(), model);
-                System.out.println("Created!");
-            } catch (SQLException e) {
-                System.out.println("Error--The table probably already exists.");
+                model_class.getMethod("setupModel", ConnectionSource.class)
+                    .invoke(model_class.newInstance(), getConnectionSource());
+            } catch (Exception e) {
                 e.printStackTrace();
+                System.exit(1);
             }
         });
     }
     
-    private void testAddUser() {
+    /*private void testAddUser() {
         try {
             User u = new User();
             u.setUsername("ncbrown");
@@ -139,5 +140,5 @@ public class Application extends Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
