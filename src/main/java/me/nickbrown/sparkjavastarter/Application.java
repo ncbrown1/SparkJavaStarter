@@ -77,14 +77,10 @@ public class Application extends Controller {
         return this.connectionSource;
     }
 
-    public void initialize(Long port) {
+    public void initialize() {
 
         // configure server settings
-        if (port == null) {
-            Spark.port(config.getInt("port"));
-        } else {
-            Spark.port(port.intValue());
-        }
+        Spark.port(config.getInt("port"));
 
         if (config.getBoolean("localhost")) {
             String projectDir = System.getProperty("user.dir");
