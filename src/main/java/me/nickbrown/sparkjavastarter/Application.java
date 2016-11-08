@@ -2,8 +2,7 @@ package me.nickbrown.sparkjavastarter;
 
 import com.google.common.collect.ImmutableMap;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.db.PostgresDatabaseType;
-import com.j256.ormlite.jdbc.DataSourceConnectionSource;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.typesafe.config.Config;
@@ -11,9 +10,11 @@ import com.typesafe.config.Config;
 import me.nickbrown.sparkjavastarter.http.AuthController;
 import me.nickbrown.sparkjavastarter.http.Controller;
 import me.nickbrown.sparkjavastarter.models.User;
-import org.postgresql.ds.PGPoolingDataSource;
+import spark.ModelAndView;
 import spark.route.RouteOverview;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,14 +49,22 @@ public class Application extends Controller {
     
     private ConnectionSource getConnectionSource() throws SQLException {
         if (this.connectionSource != null) return this.connectionSource;
-        PGPoolingDataSource source = new PGPoolingDataSource();
-        source.setDataSourceName("Application Database");
-        source.setServerName(config.getString("db.url"));
-        source.setDatabaseName(config.getString("db.database"));
-        source.setUser(config.getString("db.username"));
-        source.setPassword(config.getString("db.password"));
-        source.setMaxConnections(config.getInt("db.connections"));
-        this.connectionSource = new DataSourceConnectionSource(source, new PostgresDatabaseType());
+        
+        try {
+            URI uri = new URI(config.getString("db.url"));
+            String username = uri.getUserInfo().split(":")[0];
+            String password = uri.getUserInfo().split(":")[1];
+            int port = uri.getPort();
+    
+            String dbUrl = "jdbc:postgresql://" + uri.getHost() + ":" + port + uri.getPath();
+    
+            this.connectionSource = new JdbcConnectionSource(dbUrl, username, password);
+        } catch (URISyntaxException ue) {
+            ue.printStackTrace();
+            System.err.println("Malformed database connection string in config. Check your syntax!");
+            System.exit(1);
+        }
+        
         return this.connectionSource;
     }
 
@@ -90,7 +99,7 @@ public class Application extends Controller {
         
         HashMap<String, String> model = new HashMap<>();
         model.put("name", "foobar");
-        Spark.get("/", (req, res) -> "hi there"); //new ModelAndView(model, "home.hbs"), this);
+        Spark.get("/", (req, res) -> new ModelAndView(model, "home.hbs"), this);
         RouteOverview.enableRouteOverview(); // /debug/routeoverview/
         
         String env = System.getenv("ENV");
