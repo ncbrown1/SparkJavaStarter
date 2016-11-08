@@ -6,6 +6,7 @@ import com.typesafe.config.Config;
 
 import me.nickbrown.sparkjavastarter.http.AuthController;
 import me.nickbrown.sparkjavastarter.http.Controller;
+import me.nickbrown.sparkjavastarter.http.MainController;
 import me.nickbrown.sparkjavastarter.models.Model;
 import me.nickbrown.sparkjavastarter.models.User;
 import spark.ModelAndView;
@@ -36,7 +37,8 @@ public class Application extends Controller {
         );
     private List<Class<? extends Controller>> controllers =
         Arrays.asList(
-            AuthController.class
+            AuthController.class,
+            MainController.class
             // insert your other controllers here
         );
 
@@ -100,10 +102,6 @@ public class Application extends Controller {
         }
         
         this.publishRoutes();
-        
-        HashMap<String, String> model = new HashMap<>();
-        model.put("name", "foobar");
-        Spark.get("/", (req, res) -> new ModelAndView(model, "home.hbs"), this);
         RouteOverview.enableRouteOverview(); // /debug/routeoverview/
         
         String env = System.getenv("ENV");

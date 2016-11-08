@@ -53,6 +53,6 @@ public class AuthController extends Controller {
     public TemplateViewRoute loginRoute() {
         HashMap<String, String> context = new HashMap<>();
         context.put("name", "logged in user");
-        return (req, res) -> new ModelAndView(context, "home.hbs");
+        return (req, res) -> new ModelAndView(context, "login");
     }
 }

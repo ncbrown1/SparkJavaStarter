@@ -1,5 +1,6 @@
 package me.nickbrown.sparkjavastarter.http;
 
+import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.typesafe.config.Config;
 import me.nickbrown.sparkjavastarter.utils.HandlebarsTemplateEngine;
 
@@ -14,6 +15,7 @@ public abstract class Controller extends HandlebarsTemplateEngine {
     public Controller(Config config) {
         this.config = config;
         handlebars.registerHelpers(this);
+        handlebars.with(new ClassPathTemplateLoader("/templates", ".hbs"));
     }
     
     public abstract void publishRoutes();
