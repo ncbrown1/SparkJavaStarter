@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <!-- use slf4j-simple for System.out, use slfj-nop for no log output -->
-            <artifactId>slf4j-simple</artifactId>
+            <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4jVersion}</version>
         </dependency>
     </dependencies>

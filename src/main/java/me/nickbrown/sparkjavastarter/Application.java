@@ -7,6 +7,7 @@ import com.typesafe.config.Config;
 import me.nickbrown.sparkjavastarter.http.AuthController;
 import me.nickbrown.sparkjavastarter.http.Controller;
 import me.nickbrown.sparkjavastarter.http.MainController;
+import me.nickbrown.sparkjavastarter.http.middleware.LoggingMiddleware;
 import me.nickbrown.sparkjavastarter.models.Model;
 import me.nickbrown.sparkjavastarter.models.User;
 import spark.route.RouteOverview;
@@ -79,7 +80,6 @@ public class Application extends Controller {
     }
 
     public void initialize() {
-
         // configure server settings
         Spark.port(config.getInt("port"));
 
@@ -100,6 +100,7 @@ public class Application extends Controller {
             System.exit(1);
         }
         
+        Spark.before("*", LoggingMiddleware::log);
         this.publishRoutes();
         RouteOverview.enableRouteOverview(); // /debug/routeoverview/
         
