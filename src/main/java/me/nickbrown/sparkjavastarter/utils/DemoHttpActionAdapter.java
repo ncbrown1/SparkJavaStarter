@@ -28,11 +28,11 @@ public class DemoHttpActionAdapter extends DefaultHttpActionAdapter {
         switch (code) {
             case HttpConstants.UNAUTHORIZED:
                 halt(401, templateEngine.render(
-                    new ModelAndView(new HashMap<>(), "error401.mustache")
+                    new ModelAndView(new HashMap<>(), "401.hbs")
                 ));
             case HttpConstants.FORBIDDEN:
                 halt(403, templateEngine.render(
-                    new ModelAndView(new HashMap<>(), "error403.mustache")
+                    new ModelAndView(new HashMap<>(), "403.hbs")
                 ));
             default:
                 return super.adapt(code, context);
