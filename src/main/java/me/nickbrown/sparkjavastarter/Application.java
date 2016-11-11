@@ -9,14 +9,12 @@ import me.nickbrown.sparkjavastarter.http.Controller;
 import me.nickbrown.sparkjavastarter.http.MainController;
 import me.nickbrown.sparkjavastarter.models.Model;
 import me.nickbrown.sparkjavastarter.models.User;
-import spark.ModelAndView;
 import spark.route.RouteOverview;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import spark.Spark;
@@ -54,7 +52,9 @@ public class Application extends Controller {
                     .getConstructor(Config.class)
                     .newInstance(config)
                     .publishRoutes();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                logger.error("Problem publishing routes for controller.", e);
+            }
         });
     }
     
@@ -71,8 +71,7 @@ public class Application extends Controller {
     
             this.connectionSource = new JdbcConnectionSource(dbUrl, username, password);
         } catch (URISyntaxException ue) {
-            ue.printStackTrace();
-            System.err.println("Malformed database connection string in config. Check your syntax!");
+            logger.error("Malformed database connection string in config. Check your syntax!", ue);
             System.exit(1);
         }
         
@@ -97,7 +96,7 @@ public class Application extends Controller {
         try {
             this.initialize_daos();
         } catch (SQLException se) {
-            System.err.println("Could not establish a connection with the database.");
+            logger.error("Could not establish a connection with the database.", se);
             System.exit(1);
         }
         
@@ -116,23 +115,10 @@ public class Application extends Controller {
                 model_class.getMethod("setupModel", ConnectionSource.class)
                     .invoke(model_class.newInstance(), getConnectionSource());
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Problem setting up model connection and dao.", e);
                 System.exit(1);
             }
         });
     }
     
-    /*private void testAddUser() {
-        try {
-            User u = new User();
-            u.setUsername("ncbrown");
-            u.setName("Nick Brown");
-            u.setGithub_token("asdf1234");
-            User.dao.create(u);
-            
-            System.out.println(User.dao.queryForEq("username", "ncbrown"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
 }
