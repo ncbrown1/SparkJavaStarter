@@ -1,13 +1,13 @@
 {{#partial "content" }}
-    hello {{ name }}!<br>
+    hello {{ auth.user.name }}!<br>
 
     {{dostuff "asdf"}}<br><br>
 
-    {{profile}}<br><br>
+    {{auth.user}}<br><br>
 
-    {{profile_attrs}}<br><br>
+    {{auth.user_data}}<br><br>
 
-    {{profile_attrs.email}}<br><br>
+    {{auth.user_data.email}}<br><br>
 {{/partial}}
 
 {{> partials/base}}

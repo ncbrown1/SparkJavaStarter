@@ -1,9 +1,8 @@
 package me.nickbrown.sparkjavastarter.http;
 
 import com.typesafe.config.Config;
-import me.nickbrown.sparkjavastarter.auth.AuthProvider;
 import me.nickbrown.sparkjavastarter.auth.GitHubOAuthConfigFactory;
-import me.nickbrown.sparkjavastarter.models.User;
+import me.nickbrown.sparkjavastarter.utils.ViewModelUtil;
 import org.pac4j.sparkjava.ApplicationLogoutRoute;
 import org.pac4j.sparkjava.CallbackRoute;
 import org.pac4j.sparkjava.SecurityFilter;
@@ -41,8 +40,14 @@ public class AuthController extends Controller {
     @Override
     public void publishRoutes () {
         before("/login", authFilter);
-        get("/login", AuthController::loginRoute, this);
+        get("/login", (req, res) -> {
+            res.redirect("/");
+            return null;
+        });
         get("/logout", new ApplicationLogoutRoute(authConfig, "/"));
+    
+        before("/logged_in", authFilter);
+        get("/logged_in", AuthController::testLogin, this);
     
         final CallbackRoute callback = new CallbackRoute(authConfig);
         get("/auth/callback", callback);
@@ -53,14 +58,8 @@ public class AuthController extends Controller {
         return "dynamix " + bar;
     }
     
-    public static ModelAndView loginRoute(Request request, Response response) {
-        HashMap context = new HashMap();
-        context.put("name", "logged in user");
-        
-        User u = AuthProvider.getProfile(request, response);
-        context.put("profile", u.getProfile());
-        context.put("profile_attrs", u.getProfile().getAttributes());
-        
-        return new ModelAndView(context, "login");
+    private static ModelAndView testLogin(Request request, Response response) {
+        HashMap<String, Object> model = ViewModelUtil.generate(request, response);
+        return new ModelAndView(model, "login");
     }
 }

@@ -16,14 +16,13 @@ import java.util.Optional;
  */
 public class AuthProvider {
     
-    public static User getProfile(final Request request, final Response response) {
-        final SparkWebContext context = new SparkWebContext(request, response);
+    public static User getLoggedInUser(SparkWebContext context) {
         final ProfileManager<GitHubProfile> manager = new ProfileManager<>(context);
-        
+    
         Optional<GitHubProfile> ghp = manager.get(true);
         if (!ghp.isPresent()) return null;
         GitHubProfile profile = ghp.get();
-        
+    
         User u = new User(profile);
         try {
             User.dao.createOrUpdate(u);
@@ -33,6 +32,21 @@ public class AuthProvider {
             u = null;
         }
         return u;
+    }
+    
+    public static User getLoggedInUser(final Request request, final Response response) {
+        final SparkWebContext context = new SparkWebContext(request, response);
+        return getLoggedInUser(context);
+    }
+    
+    public static boolean isAuthenticated(SparkWebContext context) {
+        final ProfileManager<GitHubProfile> manager = new ProfileManager<>(context);
+        return manager.isAuthenticated();
+    }
+    
+    public static boolean isAuthenticated(Request request, Response response) {
+        final SparkWebContext context = new SparkWebContext(request, response);
+        return isAuthenticated(context);
     }
     
 }
