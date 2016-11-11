@@ -8,7 +8,8 @@ import org.pac4j.sparkjava.ApplicationLogoutRoute;
 import org.pac4j.sparkjava.CallbackRoute;
 import org.pac4j.sparkjava.SecurityFilter;
 import spark.ModelAndView;
-import spark.TemplateViewRoute;
+import spark.Request;
+import spark.Response;
 
 import java.util.HashMap;
 
@@ -40,7 +41,7 @@ public class AuthController extends Controller {
     @Override
     public void publishRoutes () {
         before("/login", authFilter);
-        get("/login", loginRoute(), this);
+        get("/login", AuthController::loginRoute, this);
         get("/logout", new ApplicationLogoutRoute(authConfig, "/"));
     
         final CallbackRoute callback = new CallbackRoute(authConfig);
@@ -52,14 +53,14 @@ public class AuthController extends Controller {
         return "dynamix " + bar;
     }
     
-    public TemplateViewRoute loginRoute() {
+    public static ModelAndView loginRoute(Request request, Response response) {
         HashMap context = new HashMap();
         context.put("name", "logged in user");
-        return (req, res) -> {
-            User u = AuthProvider.getProfile(req, res);
-            context.put("profile", u.getProfile());
-            context.put("profile_attrs", u.getProfile().getAttributes());
-            return new ModelAndView(context, "login");
-        };
+        
+        User u = AuthProvider.getProfile(request, response);
+        context.put("profile", u.getProfile());
+        context.put("profile_attrs", u.getProfile().getAttributes());
+        
+        return new ModelAndView(context, "login");
     }
 }
