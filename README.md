@@ -69,6 +69,18 @@ java -jar target/sparkjavastarter-1.0-jar-with-dependencies.jar serve
 * `src/main/java/me/nickbrown/sparkjavastarter/RunApplication.java` - This is
   the main class.
 
+## Things you might need to do, and how to do them
+
+* Adding a model
+  * To create a new Model, you can take a look at the existing User model in
+    `src/main/java/me/nickbrown/sparkjavastarter/models/User.java`
+  * Essentially, you are creating a plain-old java object with some private
+    variables that have some annotations over them
+  * For more advanced information on Database manipulation, check out the
+    [ORMLite documentation]().
+* Adding a controller
+* Adding routes
+
 ## Notable Additional Dependencies
 
 You can check out the `pom.xml` file for the entire list, but here is a list of
