@@ -30,8 +30,11 @@
                         <li><a href="#">Separated link</a></li>
                     </ul>
                 </li>
-                <li><p class="navbar-btn"><a href="/login" class="btn btn-success">Login</a></p></li>
-                <li><p class="navbar-btn"><a href="/logout" class="btn btn-warning">Logout</a></p></li>
+                {{#if auth.is_authed }}
+                    <li><p class="navbar-btn"><a href="/logout" class="btn btn-warning">Logout</a></p></li>
+                {{else}}
+                    <li><p class="navbar-btn"><a href="/login" class="btn btn-success">Login</a></p></li>
+                {{/if}}
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->

@@ -1,6 +1,7 @@
 package me.nickbrown.sparkjavastarter.http;
 
 import com.typesafe.config.Config;
+import me.nickbrown.sparkjavastarter.utils.ViewModelUtil;
 import spark.*;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class MainController extends Controller {
     }
     
     public static ModelAndView index(Request request, Response response) {
-        HashMap<String, String> model = new HashMap<>();
+        HashMap<String, Object> model = ViewModelUtil.generate(request, response);
         model.put("name", "foobar");
         return new ModelAndView(model, "index");
     }
