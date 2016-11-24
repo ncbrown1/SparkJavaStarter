@@ -10,6 +10,7 @@ import me.nickbrown.sparkjavastarter.http.MainController;
 import me.nickbrown.sparkjavastarter.http.middleware.LoggingMiddleware;
 import me.nickbrown.sparkjavastarter.models.Model;
 import me.nickbrown.sparkjavastarter.models.User;
+import org.eclipse.jetty.util.resource.Resource;
 import spark.route.RouteOverview;
 
 import java.net.URI;
@@ -82,14 +83,7 @@ public class Application extends Controller {
     public void initialize() {
         // configure server settings
         Spark.port(config.getInt("port"));
-
-        if (config.getBoolean("localhost")) {
-            String projectDir = System.getProperty("user.dir");
-            String staticDir = "/src/main/resources/public";
-            Spark.staticFiles.externalLocation(projectDir + staticDir);
-        } else {
-            Spark.staticFiles.location("/public");
-        }
+        Spark.staticFileLocation("/META-INF/resources");
         
         // connect to database
 
