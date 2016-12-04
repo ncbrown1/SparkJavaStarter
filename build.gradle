@@ -57,14 +57,3 @@ clean.dependsOn 'clientClean'
 task stage {
     dependsOn installDist
 }
-
-//task buildRunnable {
-//    setDescription 'Assemble everything needed to run the application'
-//    doFirst {
-//        logger.info("Assembling application runnable")
-//    }
-//    doLast {
-//        logger.info("Exported runnable script to build/install/sparkjavastarter/bin/")
-//    }
-//    dependsOn startScripts, installDist, clientInstall
-//}
