@@ -19,12 +19,12 @@ Note that the `env.sh` file is NOT saved to github, since it contains secret inf
 1. Fill it in similar to the picture below
 1. The callback URL should be http://localhost:4567/auth/callback
 
-  ![OAuth App Create Example](https://github.com/ncbrown1/SparkJavaStarter/raw/master/oauth_app_create_example.png "Example OAuth Configurations")
+  ![OAuth App Create Example](https://github.com/ncbrown1/SparkJavaStarter/raw/master/img/oauth_app_create_example.png "Example OAuth Configurations")
 
 1. You should be redirected to the following page. Take note of the client ID and
    the client secret. You will need that in the next step.
 
-   ![OAuth App Result Example](https://github.com/ncbrown1/SparkJavaStarter/raw/master/oauth_app_result_example.png "Example OAuth Configurations")
+   ![OAuth App Result Example](https://github.com/ncbrown1/SparkJavaStarter/raw/master/img/oauth_app_result_example.png "Example OAuth Configurations")
 
 ### Creating and Running `env.sh`
 
