@@ -3,3 +3,9 @@
 .DS_Store
 target/
 env.sh
+build
+.gradle
+out
+*.ipr
+*.iws
+src/main/resources/public/lib

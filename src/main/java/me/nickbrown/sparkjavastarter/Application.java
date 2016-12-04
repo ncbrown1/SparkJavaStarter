@@ -83,7 +83,7 @@ public class Application extends Controller {
     public void initialize() {
         // configure server settings
         Spark.port(config.getInt("port"));
-        Spark.staticFileLocation("/META-INF/resources");
+        Spark.staticFileLocation("/public");
         
         // connect to database
 
