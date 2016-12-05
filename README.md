@@ -47,20 +47,9 @@ CREATE DATABASE testjava;
 CREATE USER testuser WITH PASSWORD 'testpassword';
 GRANT ALL PRIVILEGES ON DATABASE "testjava" TO testuser;
 ```
-1. Ensure you have `maven` and `java` installed.
-1. Build the application via `mvn package`
-1. To see all command line options, run
-```
-java -jar target/sparkjavastarter-1.0-jar-with-dependencies.jar --help
-```
-1. If you are running this for the first time, create the database tables:
-```
-java -jar target/sparkjavastarter-1.0-jar-with-dependencies.jar init-db
-```
-1. To run the web server, run
-```
-java -jar target/sparkjavastarter-1.0-jar-with-dependencies.jar serve
-```
+1. Ensure you have `java` installed.
+1. Build and run the application via `./gradlew run`
+1. That's it!
 
 ## Notable Files
 
@@ -71,6 +60,8 @@ java -jar target/sparkjavastarter-1.0-jar-with-dependencies.jar serve
 
 ## Things you might need to do, and how to do them
 
+TODO: finish the docs for this section
+ 
 * Adding a model
   * To create a new Model, you can take a look at the existing User model in
     `src/main/java/me/nickbrown/sparkjavastarter/models/User.java`
