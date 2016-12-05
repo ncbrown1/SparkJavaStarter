@@ -55,5 +55,5 @@ clientDependencies {
 processResources.dependsOn 'clientInstall'
 clean.dependsOn 'clientClean'
 task stage {
-    dependsOn installDist
+    dependsOn installDist, clean
 }
